@@ -1,0 +1,11 @@
+
+node_modules/*
+bower_components/*
+
+# 自定义
+__tests__/*
+ios/*
+android/*
+dist/*
+build/*
+scripts/*

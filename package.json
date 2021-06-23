@@ -1,0 +1,24 @@
+{
+  "name": "metro-code-split",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/index.js",
+  "bin": {
+    "mcs-scripts": "./src/bin/index.js"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "general-tools": "^0.0.1"
+  },
+  "peerDependencies": {
+    "metro": ">=0.64.0"
+  },
+  "files": [
+    "src"
+  ]
+}

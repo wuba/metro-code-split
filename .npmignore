@@ -1,0 +1,3 @@
+~*
+# 优先级 package.json files (白名单) > .npmignore (黑名单) > .gitignore (黑名单)
+# 默认会提交的有 package.json main module 指向的文件 README.md等

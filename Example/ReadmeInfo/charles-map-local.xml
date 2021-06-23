@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<?charles serialisation-version='2.0' ?>
+<mapLocal>
+  <toolEnabled>true</toolEnabled>
+  <mappings>
+    <mapLocalMapping>
+      <sourceLocation>
+        <protocol>https</protocol>
+        <host>github.githubassets.com</host>
+        <port>443</port>
+        <path>/a-rn-project/*</path>
+      </sourceLocation>
+      <dest>/Users/xxx/rn-code-split-demo/dist</dest>
+      <enabled>true</enabled>
+      <caseSensitive>true</caseSensitive>
+    </mapLocalMapping>
+  </mappings>
+</mapLocal>
