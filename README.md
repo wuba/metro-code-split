@@ -118,5 +118,6 @@ Further split the React Native code based on Metro build to improve performance,
 
 ## TODO
 
+- cacheStores: [], // concurrent build cache issues https://github.com/facebook/metro/issues/331
 - source map support
 - ts refactor
