@@ -1,5 +1,5 @@
 const path = require('path')
-const { fse, getContentHash, toRelativePath } = require('general-tools')
+const { fse, getContentHash, toRelativePath, babel: { parser, traverse, generate } } = require('general-tools')
 const { paths, output } = require('../utils')
 
 const mainModuleId = 'main' // main moduleId flag
@@ -133,8 +133,18 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
   // inject map info
   for (const arr of map.get(mainModuleId).modules) {
     if (arr[0] === toRelativePath(paths.chunkModuleIdToHashMapPath)) {
-      // TODO Ast
-      arr[1] = arr[1].replace(/(exports=)\{\}/, `$1${JSON.stringify(chunkModuleIdToHashMap)}`)
+      const ast = parser.parse(arr[1])
+      traverse(ast, {
+        FunctionExpression(nodePath) {
+          nodePath
+            .get('body.body.0')
+            .get('expression')
+            .get('right')
+            .replaceWithSourceString(JSON.stringify(chunkModuleIdToHashMap))
+        }
+      })
+      const { code } = generate(ast, { minified: true })
+      arr[1] = code
       break
     }
   }

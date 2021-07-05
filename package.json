@@ -1,6 +1,6 @@
 {
   "name": "metro-code-split",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.js",
   "bin": {
     "mcs-scripts": "./src/bin/index.js"
@@ -8,7 +8,11 @@
   "scripts": {
     "test": ""
   },
-  "keywords": ["react-native", "metro", "code-split"],
+  "keywords": [
+    "react-native",
+    "metro",
+    "code-split"
+  ],
   "author": "qixiaoqi",
   "license": "MIT",
   "description": "Further split the React Native code based on Metro build to improve performance, providing `Dll` and `Dynamic Imports` features",
@@ -20,7 +24,7 @@
     "url": "git+https://github.com/wuba/metro-code-split.git"
   },
   "dependencies": {
-    "general-tools": "^0.0.1"
+    "general-tools": "^0.0.4"
   },
   "peerDependencies": {
     "metro": ">=0.64.0"

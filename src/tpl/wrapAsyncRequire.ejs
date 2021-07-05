@@ -27,7 +27,7 @@ const requireEnsure = (chunkId) => {
       promises.push(installedChunkData[2] = promise)
       const error = new Error() // create errors before stack expansion so that useful stack traces can be obtained later
       const resourceUri = urlJoin(
-        global.__APP__.publicPath,
+        global.<%= options.globalInlayVarName %>.publicPath,
         '<%= options.relativeChunkDir %>',
         chunkModuleIdToHashMap[chunkId]['hash'] + '<%= options.fileSuffix %>'
       )

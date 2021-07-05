@@ -25,6 +25,7 @@ const defaultOptions = {
     asyncFlag: 'async', // async flag
     minSize: 20000, // minimum split size before compression
   },
+  globalInlayVarName: '__APP__',
   // module path
   // /node_modules/metro/src/Server.js
   baseJSBundlePath: 'metro/src/DeltaBundler/Serializers/baseJSBundle',
@@ -150,6 +151,7 @@ class MetroCodeSplit {
         options: {
           packageName: pkg.name,
           asyncRequirePath: this.options.asyncRequirePath,
+          globalInlayVarName: this.options.globalInlayVarName,
           relativeChunkDir: this.options.output.chunkDir,
           fileSuffix: output.fileSuffix,
           timeoutTime: (this.hasDynamicImports ? this.options : defaultOptions)['output']['chunkLoadTimeout'],
