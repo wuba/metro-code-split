@@ -1,6 +1,6 @@
 const path = require('path')
-const { fse, getContentHash, toRelativePath, babel: { parser, traverse, generate } } = require('general-tools')
-const { paths, output } = require('../utils')
+const { fse, getContentHash, babel: { parser, traverse, generate } } = require('general-tools')
+const { paths, output, replacePath } = require('../utils')
 
 const mainModuleId = 'main' // main moduleId flag
 
@@ -41,7 +41,7 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
   for (const [key, value] of graph.dependencies) {
     // common模块一定在主包中 不拆分 但是也必须走流程检测 否则异步引用common模块 不会记录它的chunkModuleIdToHashMap
     const asyncTypes = [...value.inverseDependencies].map(absolutePath => {
-      const relativePath = toRelativePath(absolutePath)
+      const relativePath = replacePath(absolutePath)
       const val = graph.dependencies.get(absolutePath)
       for (const [k, v] of val.dependencies) {
         if (v.absolutePath === key) {
@@ -65,7 +65,7 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
 
     // [null, asyncFlag, 'src/components/AsyncComA.tsx'] 主包
 
-    const relativePath = toRelativePath(key)
+    const relativePath = replacePath(key)
     if (asyncTypes.length === 0 || asyncTypes.some(v => v === null)) { // 没有任何逆依赖 （如入口文件）
       map.get(mainModuleId).moduleIds.add(relativePath)
     } else if (asyncTypes.every(v => v === asyncFlag)) {
@@ -125,14 +125,14 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
     outputChunkFns.push((async () => {
       const dir = path.resolve(mcs.outputChunkDir, `${hash}${output.fileSuffix}`)
       await fse.writeFile(dir, code)
-      console.log(`info Writing chunk bundle output to: ${toRelativePath(dir)}`)
+      console.log(`info Writing chunk bundle output to: ${replacePath(dir)}`)
     })())
   }
   await Promise.all(outputChunkFns)
 
   // inject map info
   for (const arr of map.get(mainModuleId).modules) {
-    if (arr[0] === toRelativePath(paths.chunkModuleIdToHashMapPath)) {
+    if (arr[0] === replacePath(paths.chunkModuleIdToHashMapPath)) {
       const ast = parser.parse(arr[1])
       traverse(ast, {
         FunctionExpression(nodePath) {

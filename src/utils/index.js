@@ -2,6 +2,7 @@ const { argv } = require('general-tools')
 const paths = require('./paths')
 const isProduction = require('./isProduction')
 const output = require('./output')
+const replacePath = require('./replacePath')
 const { relativeDllEntry } = require('../types')
 
 /**
@@ -17,6 +18,7 @@ module.exports = {
   paths,
   isProduction,
   output,
+  replacePath,
   dllJsonName: `_dll.${argv.platform}.json`,
   isBaseDllPath,
 }

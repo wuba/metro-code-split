@@ -1,9 +1,9 @@
 const path = require('path')
 const { mergeConfig } = require('metro-config')
-const { fse, ejs, tapable: { SyncHook, SyncBailHook }, log, paths: ps, dataExtend, argv, toRelativePath } = require('general-tools')
+const { fse, ejs, tapable: { SyncHook, SyncBailHook }, log, paths: ps, dataExtend, argv } = require('general-tools')
 const baseConfig = require('./config/baseConfig')
 const InjectVar = require('./plugins/InjectVar')
-const { isBaseDllPath, paths, dllJsonName, output } = require('./utils')
+const { isBaseDllPath, paths, dllJsonName, output, replacePath } = require('./utils')
 const { BuildType } = require('./types')
 const pkg = require('../package.json')
 
@@ -60,7 +60,7 @@ class MetroCodeSplit {
         let timeId = null
 
         return arg => {
-          const relativePath = toRelativePath(arg.path)
+          const relativePath = replacePath(arg.path)
           const arr = this.options.dll.entry.length !== 0 && isBaseDllPath(relativePath) ? dllArr : busineArr
           arr.push(relativePath)
 
@@ -70,7 +70,7 @@ class MetroCodeSplit {
               const dllOutputPath = path.resolve(paths.outputDir, dllJsonName)
               const dllContent = JSON.stringify([...new Set(dllArr)], null, 2)
               await fse.writeFile(dllOutputPath, dllContent)
-              console.log(`info Writing json output to: ${toRelativePath(dllOutputPath)}`)
+              console.log(`info Writing json output to: ${replacePath(dllOutputPath)}`)
             } catch (err) {
               console.error(err)
             }
@@ -202,7 +202,7 @@ class MetroCodeSplit {
       BuildType.DllJson !== this.bundleOutputInfo.name && log('warning: failed to load the dllRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
     }
     // inertia method
-    this.isDllPath = p => commonPaths.includes(toRelativePath(p))
+    this.isDllPath = p => commonPaths.includes(replacePath(p))
     return this.isDllPath(p)
   }
 

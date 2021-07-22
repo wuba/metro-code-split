@@ -1,6 +1,6 @@
-const { fse, toRelativePath } = require('general-tools')
+const { fse } = require('general-tools')
 const dynamicImports = require('./dynamicImports')
-const { paths } = require('../utils')
+const { paths, replacePath } = require('../utils')
 
 /**
  * craete must config
@@ -20,7 +20,7 @@ module.exports = mcs => {
         return absolutePath => {
           const moduleId = cacheMap.get(absolutePath)
           if (moduleId) return moduleId
-          const relativePath = toRelativePath(absolutePath)
+          const relativePath = replacePath(absolutePath)
           if (mcs.isDllPath(absolutePath)) { // dll module
             cacheMap.set(absolutePath, relativePath)
             return relativePath
