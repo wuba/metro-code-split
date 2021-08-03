@@ -9,8 +9,8 @@ const { paths, replacePath } = require('../utils')
  */
 module.exports = mcs => {
   return {
-    resetCache: true, // package body to build different projects
-    cacheStores: [], // concurrent build cache issues https://github.com/facebook/metro/issues/331
+    // resetCache: true, // package body to build different projects
+    // cacheStores: [], // concurrent build cache issues https://github.com/facebook/metro/issues/331
     transformer: mcs.hasDynamicImports ? { asyncRequireModulePath: paths.asyncRequireModulePath } : {},
     serializer: {
       // js with built-in App

@@ -1,6 +1,6 @@
 {
   "name": "metro-code-split",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "src/index.js",
   "bin": {
     "mcs-scripts": "./src/bin/index.js"

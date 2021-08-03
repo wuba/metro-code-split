@@ -39,7 +39,7 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
 
   // compute chunks
   for (const [key, value] of graph.dependencies) {
-    // common模块一定在主包中 不拆分 但是也必须走流程检测 否则异步引用common模块 不会记录它的chunkModuleIdToHashMap
+    // dll模块一定在主包中 不拆分 但是也必须走流程检测 否则异步引用dll模块 不会记录它的chunkModuleIdToHashMap
     const asyncTypes = [...value.inverseDependencies].map(absolutePath => {
       const relativePath = replacePath(absolutePath)
       const val = graph.dependencies.get(absolutePath)
@@ -53,17 +53,18 @@ module.exports = async (mcs, entryPoint, prepend, graph, bundleOptions) => {
       }
     })
 
-    // [] 主包
-    // [null] 主包
-    // [asyncFlag] 这个模块 只异步引用了 新增一个chunk
+    // [] main
+
+    // [null] main
+    // [asyncFlag] only async add chunk
     // ['src/components/AsyncComA.tsx'] 异步模块中同步引用 从属与某个chunk
 
-    // [null, asyncFlag] 主包
-    // [asyncFlag, 'src/components/AsyncComA.tsx'] （理论应该拆分，本期拆到主包中）
-    // ['src/components/AsyncComA.tsx', 'src/components/AsyncComB.tsx'] 多个异步模块中同步引用相同的代码 （理论应该拆分，本期拆到主包中）
-    // [null, 'src/components/AsyncComA.tsx'] 主包
+    // [null, asyncFlag] main
+    // [asyncFlag, 'src/components/AsyncComA.tsx'] （理论应该拆分，本期拆到main中）
+    // ['src/components/AsyncComA.tsx', 'src/components/AsyncComB.tsx'] 多个异步模块中同步引用相同的代码 （理论应该拆分，本期拆到main中）
+    // [null, 'src/components/AsyncComA.tsx'] main
 
-    // [null, asyncFlag, 'src/components/AsyncComA.tsx'] 主包
+    // [null, asyncFlag, 'src/components/AsyncComA.tsx'] main
 
     const relativePath = replacePath(key)
     if (asyncTypes.length === 0 || asyncTypes.some(v => v === null)) { // 没有任何逆依赖 （如入口文件）

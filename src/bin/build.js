@@ -66,28 +66,26 @@ program
 
     await fse[isBuildDll ? 'ensureDir' : 'emptyDir'](path.resolve(paths.cwdDir, outputDir))
 
-    await Promise.all(
-      pfs.map((v) => {
-        const BuildTypeToFileNameMap = {
-          [BuildType.DllJson]: `_dll.${v}.json`,
-          [BuildType.Dll]: `_dll.${v}.bundle`,
-          [BuildType.Busine]: `buz.${v}.bundle`,
-        }
-        return execa.command(
-          [
-            'react-native bundle',
-            `--platform ${v}`,
-            `--entry-file ${isBuildDll ? relativeDllEntry : entry}`,
-            `--bundle-output ${path.join(
-              outputDir,
-              BuildTypeToFileNameMap[type]
-            )}`,
-            `--dev false`,
-          ].join(' '),
-          { ...getDEO(), stdio: 'inherit' }
-        )
-      })
-    )
+    for (const item of pfs) {
+      const BuildTypeToFileNameMap = {
+        [BuildType.DllJson]: `_dll.${item}.json`,
+        [BuildType.Dll]: `_dll.${item}.bundle`,
+        [BuildType.Busine]: `buz.${item}.bundle`,
+      }
+      await execa.command(
+        [
+          'react-native bundle',
+          `--platform ${item}`,
+          `--entry-file ${isBuildDll ? relativeDllEntry : entry}`,
+          `--bundle-output ${path.join(
+            outputDir,
+            BuildTypeToFileNameMap[type]
+          )}`,
+          '--dev false',
+        ].join(' '),
+        { ...getDEO(), stdio: 'inherit' }
+      )
+    }
 
   })
   .on('--help', () => {
