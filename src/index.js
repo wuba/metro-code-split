@@ -202,7 +202,7 @@ class MetroCodeSplit {
       BuildType.DllJson !== this.bundleOutputInfo.name && log('warning: failed to load the dllRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
     }
     // inertia method
-    this.isDllPath = p => commonPaths.includes(replacePath(p))
+    this.isDllPath = p => commonPaths.some(v => p.endsWith(v) || v.endsWith(p))
     return this.isDllPath(p)
   }
 

@@ -14,7 +14,7 @@ Further split the React Native code based on Metro build to improve performance,
 
   | metro version | metro-code-split version |
   | :-----------: | :----------------------: |
-  | 0.64.0 - 0.66.0 | 0.1.x |
+  | 0.64.0 - 0.66.2 | 0.1.x |
 
 ## How to use it?
 
@@ -118,6 +118,5 @@ Further split the React Native code based on Metro build to improve performance,
 
 ## TODO
 
-- cacheStores: [], // concurrent build cache issues https://github.com/facebook/metro/issues/331
 - source map support
 - ts refactor
