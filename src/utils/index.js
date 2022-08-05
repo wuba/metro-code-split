@@ -20,5 +20,6 @@ module.exports = {
   output,
   replacePath,
   dllJsonName: `_dll.${argv.platform}.json`,
+  preName: `_pre.${argv.platform}.json`,
   isBaseDllPath,
 }

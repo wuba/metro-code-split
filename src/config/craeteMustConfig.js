@@ -1,6 +1,7 @@
+const path = require('path')
 const { fse } = require('general-tools')
 const dynamicImports = require('./dynamicImports')
-const { paths, replacePath } = require('../utils')
+const { paths, replacePath, preName } = require('../utils')
 
 /**
  * craete must config
@@ -22,8 +23,9 @@ module.exports = mcs => {
           if (moduleId) return moduleId
           const relativePath = replacePath(absolutePath)
           if (mcs.isDllPath(absolutePath)) { // dll module
-            cacheMap.set(absolutePath, relativePath)
-            return relativePath
+            const dllId = mcs.findDllModuleId(absolutePath)
+            cacheMap.set(absolutePath, dllId)
+            return dllId
           } else { // business module
             return mcs.options.createBusinessModuleId({ mcs, cacheMap, absolutePath, relativePath })
           }
@@ -31,6 +33,12 @@ module.exports = mcs => {
       },
       // Serializer
       async customSerializer (...args) {
+        // build dllJosn pre section
+        if (mcs.isBuildDllJson) {
+          const preOutputPath = path.resolve(paths.outputDir, preName)
+          const preContent = JSON.stringify(args[1].map(v => replacePath(v.path)), null, 2)
+          await fse.writeFile(preOutputPath, preContent)
+        }
         if (!mcs.isBuildDll) mcs.hooks.beforeCustomSerializer.call(...args)
 
         let bundle = ''

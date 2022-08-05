@@ -3,7 +3,7 @@ const { mergeConfig } = require('metro-config')
 const { fse, ejs, tapable: { SyncHook, SyncBailHook }, log, paths: ps, dataExtend, argv } = require('general-tools')
 const baseConfig = require('./config/baseConfig')
 const InjectVar = require('./plugins/InjectVar')
-const { isBaseDllPath, paths, dllJsonName, output, replacePath } = require('./utils')
+const { isBaseDllPath, paths, dllJsonName, output, replacePath, preName } = require('./utils')
 const { BuildType } = require('./types')
 const pkg = require('../package.json')
 
@@ -194,16 +194,58 @@ class MetroCodeSplit {
    * @returns { boolean }
    */
   isDllPath = p => {
+    let prePaths = []
     let commonPaths = []
+    const preRefPath = path.resolve(ps.cwdDir, path.join(this.options.dll.referenceDir, preName))
+    const dllRefPath = path.resolve(ps.cwdDir, path.join(this.options.dll.referenceDir, dllJsonName))
     try {
-      const dllRefPath = path.resolve(ps.cwdDir, path.join(this.options.dll.referenceDir, dllJsonName))
+      prePaths = require(preRefPath)
+    } catch (err) {
+      !this.isBuildDllJson && log('warning: failed to load the preRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
+    }
+    try {
       commonPaths = require(dllRefPath)
     } catch (err) {
-      BuildType.DllJson !== this.bundleOutputInfo.name && log('warning: failed to load the dllRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
+      !this.isBuildDllJson && log('warning: failed to load the dllRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
     }
     // inertia method
-    this.isDllPath = p => commonPaths.includes(replacePath(p))
+    this.isDllPath = ap => {
+      const rp = replacePath(ap)
+      // iife section contains | __d ===
+      return prePaths.some(v => rp.endsWith(v) || v.endsWith(rp)) || commonPaths.includes(rp)
+    }
     return this.isDllPath(p)
+  }
+
+  /**
+   * @param { string } p absolute path
+   * @returns { string }
+   */
+  findDllModuleId = p => {
+    let prePaths = []
+    let commonPaths = []
+    const preRefPath = path.resolve(ps.cwdDir, path.join(this.options.dll.referenceDir, preName))
+    const dllRefPath = path.resolve(ps.cwdDir, path.join(this.options.dll.referenceDir, dllJsonName))
+    try {
+      prePaths = require(preRefPath)
+    } catch (err) {
+      !this.isBuildDllJson && log('warning: failed to load the preRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
+    }
+    try {
+      commonPaths = require(dllRefPath)
+    } catch (err) {
+      !this.isBuildDllJson && log('warning: failed to load the dllRefPath correctly! are you setting the "dll.referenceDir" correctly?', 'yellow')
+    }
+    // inertia method
+    this.findDllModuleId = ap => {
+      const rp = replacePath(ap)
+      const iifeId = prePaths.find(v => rp.endsWith(v) || v.endsWith(rp))
+      if (iifeId) return iifeId
+      const dId = commonPaths.find(v => v === rp)
+      if (dId) return dId
+      throw new Error('failed to find the dll module id!')
+    }
+    return this.findDllModuleId(p)
   }
 
   async mergeTo (busineConfig) {
@@ -242,6 +284,10 @@ class MetroCodeSplit {
   // Whether or not to build Dll is relevant
   get isBuildDll () {
     return [BuildType.DllJson, BuildType.Dll].includes(this.bundleOutputInfo.name)
+  }
+
+  get isBuildDllJson () {
+    return BuildType.DllJson === this.bundleOutputInfo.name
   }
 }
 
