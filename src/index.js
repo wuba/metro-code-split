@@ -1,5 +1,4 @@
 const path = require('path')
-const { mergeConfig } = require('metro-config')
 const { fse, ejs, tapable: { SyncHook, SyncBailHook }, log, paths: ps, dataExtend, argv } = require('general-tools')
 const baseConfig = require('./config/baseConfig')
 const InjectVar = require('./plugins/InjectVar')
@@ -261,7 +260,7 @@ class MetroCodeSplit {
     this.check(busineConfig)
     this.hooks.afterCheck.call(this.freezeFields)
     const craeteMustConfig = require('./config/craeteMustConfig')
-    return mergeConfig(baseConfig, busineConfig, craeteMustConfig(this))
+    return [baseConfig, busineConfig, craeteMustConfig(this)]
   }
 
   get baseJSBundle () { return require(this.options.baseJSBundlePath) }

@@ -12,9 +12,10 @@ Further split the React Native code based on Metro build to improve performance,
 - dependencies react-native -> @react-native-community/cli -> metro
 - metro-code-split -> metro
 
-  | metro version | metro-code-split version |
-  | :-----------: | :----------------------: |
-  | 0.64.0 - 0.66.2 | 0.1.x |
+  |  metro version  | metro-code-split version |
+  |:---------------:|:------------------------:|
+  | 0.64.0 - 0.66.2 |          0.1.x           |
+  |     0.81.5      |      Package not generated yet<br/> (requires manual packaging)        |
 
 ## How to use it?
 
@@ -67,8 +68,24 @@ Further split the React Native code based on Metro build to improve performance,
       }),
     },
   }
+  
+  // module.exports = process.env.NODE_ENV === 'production' ? mcs.mergeTo(busineConfig) : busineConfig
 
-  module.exports = process.env.NODE_ENV === 'production' ? mcs.mergeTo(busineConfig) : busineConfig
+  async function getMetroConfig() {
+    let configToMerge;
+  
+    if (process.env.NODE_ENV === 'production') {
+      configToMerge = await mcs.mergeTo(busineConfig);
+    } else {
+      configToMerge = [busineConfig];
+    }
+  
+    const defaultConfig = await getDefaultConfig(__dirname);
+  
+    return mergeConfig(defaultConfig, ...configToMerge);
+  }
+  
+  module.exports = getMetroConfig();
 ```
 
 - [Mcs DefaultOptions](./src/index.js)

@@ -27,7 +27,7 @@
     "general-tools": "^0.0.4"
   },
   "peerDependencies": {
-    "metro": ">=0.64.0"
+    "metro": "^0.81.5"
   },
   "files": [
     "src"
